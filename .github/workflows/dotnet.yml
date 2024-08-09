@@ -28,7 +28,9 @@ jobs:
     - name: Publish
       run: |
         mkdir ./pub
-        dotnet publish ZZZTOJ.Botris -p:PublishSingleFile=true --self-contained true -o ./pub
+        dotnet publish ZZZTOJ.Botris -p:PublishSingleFile=true --self-contained false -o ./pub
+    - name: Remove pdb files
+      run: rm ./pub/*.pdb
     - name: Upload dotnet test results
       uses: actions/upload-artifact@v4
       with:
