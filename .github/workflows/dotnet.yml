@@ -5,34 +5,58 @@ name: ZZZBotris.Net CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["ci-*, master"]
+    tags: [ pre*, v* ]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
 jobs:
-          
   build:
     strategy:
       matrix:
-        os: [ ubuntu, windows, macos ]
+        os: [macos, ubuntu, windows]
     runs-on: ${{matrix.os}}-latest
-
+    env:
+      OUTPUT_FOLDER: ./build
+      PROJECT_NAME: ZZZTOJ.Botris
+      TETRIS_AI_INPUT_FILENAME: ${{ fromJSON('{"macos":"libtetris_ai.dylib","ubuntu":"libtetris_ai.so","windows":"tetris_ai.dll"}')[matrix.os] }}
+      TETRIS_AI_OUTPUT_FILENAME: ${{ fromJSON('{"macos":"zzz_botris.dylib","ubuntu":"zzz_botris.so","windows":"zzz_botris.dll"}')[matrix.os] }}
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-    - name: Install Dependencies
-      run: dotnet restore
-    - name: Publish
-      run: |
-        mkdir ./pub
-        dotnet publish ZZZTOJ.Botris -p:PublishSingleFile=true --self-contained false -o ./pub
-    - name: Remove pdb files
-      run: rm ./pub/*.pdb
-    - name: Upload dotnet test results
-      uses: actions/upload-artifact@v4
-      with:
-        name: ZZZBotris_${{ matrix.os }}
-        path: ./pub
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build and publish
+        run: |
+          mkdir ${{ env.OUTPUT_FOLDER }}
+          dotnet publish ${{ env.PROJECT_NAME }} -p:PublishSingleFile=true --self-contained false -o ${{ env.OUTPUT_FOLDER }}
+      - name: Remove pdb files
+        run: rm ${{ env.OUTPUT_FOLDER }}/*.pdb
+      - name: Get tetris_ai_runner
+        uses: robinraju/release-downloader@v1.9
+        with:
+          repository: TetrisAI/tetris_ai_runner
+          latest: true
+          preRelease: true
+          fileName: ${{ env.TETRIS_AI_INPUT_FILENAME }}
+          tarBall: false
+          zipBall: false
+          out-file-path: ${{ env.OUTPUT_FOLDER }}
+      - name: Rename tetris_ai_runner
+        run: mv ${{ env.OUTPUT_FOLDER }}/${{ env.TETRIS_AI_INPUT_FILENAME }} ${{ env.OUTPUT_FOLDER }}/${{ env.TETRIS_AI_OUTPUT_FILENAME }}
+      - name: Upload dotnet test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PROJECT_NAME }}_${{ matrix.os }}
+          path: ${{ env.OUTPUT_FOLDER }}/*
+      - name: Upload release
+        if: ${{ (startsWith(github.ref, 'refs/tags/pre') || startsWith(github.ref, 'refs/tags/v'))}}
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: |
+            ${{ env.OUTPUT_FOLDER }}/*
+          prerelease: ${{ startsWith(github.ref, 'refs/tags/pre') }}
