@@ -5,10 +5,10 @@ name: ZZZBotris.Net CI
 
 on:
   push:
-    branches: ["ci-*, master"]
+    branches: [ci-*, master]
     tags: [ pre*, v* ]
   pull_request:
-    branches: ["master"]
+    branches: [master]
 
 jobs:
   build:
