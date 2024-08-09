@@ -11,9 +11,11 @@ on:
 
 jobs:
           
-  build-linux:
-
-    runs-on: ubuntu-latest
+  build:
+    strategy:
+      matrix:
+        os: [ ubuntu, windows, macos ]
+    runs-on: ${{matrix.os}}-latest
 
     steps:
     - uses: actions/checkout@v4
@@ -26,9 +28,9 @@ jobs:
     - name: Publish
       run: |
         mkdir ./pub
-        dotnet publish -o ./pub
+        dotnet publish -p:PublishSingleFile=true --self-contained true -o ./pub
     - name: Upload dotnet test results
       uses: actions/upload-artifact@v4
       with:
-        name: ZZZBotris
+        name: ZZZBotris_${{ matrix.os }}
         path: ./pub
