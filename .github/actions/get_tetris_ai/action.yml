@@ -19,7 +19,7 @@ runs:
         repository: TetrisAI/tetris_ai_runner
         latest: true
         preRelease: true
-        fileName: ${{ TETRIS_AI_INPUT_FILENAME }}
+        fileName: ${{ env.TETRIS_AI_INPUT_FILENAME }}
         tarBall: false
         zipBall: false
         out-file-path: ${{ inputs.output_folder }}
