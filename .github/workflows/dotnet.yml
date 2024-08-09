@@ -23,30 +23,16 @@ jobs:
       TETRIS_AI_OUTPUT_FILENAME: ${{ fromJSON('{"macos":"zzz_botris.dylib","ubuntu":"zzz_botris.so","windows":"zzz_botris.dll"}')[matrix.os] }}
     steps:
       - uses: actions/checkout@v4
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - name: Build Project
+        uses: ./.github/actions/build_dotnet
         with:
-          dotnet-version: 8.0.x
-      - name: Install dependencies
-        run: dotnet restore
-      - name: Build and publish
-        run: |
-          mkdir ${{ env.OUTPUT_FOLDER }}
-          dotnet publish ${{ env.PROJECT_NAME }} -p:PublishSingleFile=true --self-contained false -o ${{ env.OUTPUT_FOLDER }}
-      - name: Remove pdb files
-        run: rm ${{ env.OUTPUT_FOLDER }}/*.pdb
+          output_folder: ${{ env.OUTPUT_FOLDER }}
+          project_name: ${{ env.PROJECT_NAME }}
       - name: Get tetris_ai_runner
-        uses: robinraju/release-downloader@v1.9
+        uses: ./.github/actions/get_tetris_ai
         with:
-          repository: TetrisAI/tetris_ai_runner
-          latest: true
-          preRelease: true
-          fileName: ${{ env.TETRIS_AI_INPUT_FILENAME }}
-          tarBall: false
-          zipBall: false
-          out-file-path: ${{ env.OUTPUT_FOLDER }}
-      - name: Rename tetris_ai_runner
-        run: mv ${{ env.OUTPUT_FOLDER }}/${{ env.TETRIS_AI_INPUT_FILENAME }} ${{ env.OUTPUT_FOLDER }}/${{ env.TETRIS_AI_OUTPUT_FILENAME }}
+          os: ${{ matrix.os }}
+          output_folder: ${{ env.OUTPUT_FOLDER }}
       - name: Upload dotnet test results
         uses: actions/upload-artifact@v4
         with:

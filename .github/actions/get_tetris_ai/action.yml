@@ -1,0 +1,31 @@
+name: 'Get tetris_ai_runner'
+description: 'Get tetris_ai_runner'
+inputs:
+  os:
+    description: 'Running OS'
+    required: true
+  output_folder:
+    description: 'Output folder'
+    required: false
+    default: "./build"
+runs:
+  using: "composite"
+  steps:
+    - name: Download tetris_ai_runner
+      env:
+        TETRIS_AI_INPUT_FILENAME: ${{ fromJSON('{"macos":"libtetris_ai.dylib","ubuntu":"libtetris_ai.so","windows":"tetris_ai.dll"}')[inputs.os] }}
+      uses: robinraju/release-downloader@v1.9
+      with:
+        repository: TetrisAI/tetris_ai_runner
+        latest: true
+        preRelease: true
+        fileName: ${{ TETRIS_AI_INPUT_FILENAME }}
+        tarBall: false
+        zipBall: false
+        out-file-path: ${{ inputs.output_folder }}
+    - name: Rename tetris_ai_runner
+      env:
+        TETRIS_AI_INPUT_FILENAME: ${{ fromJSON('{"macos":"libtetris_ai.dylib","ubuntu":"libtetris_ai.so","windows":"tetris_ai.dll"}')[inputs.os] }}
+        TETRIS_AI_OUTPUT_FILENAME: ${{ fromJSON('{"macos":"zzz_botris.dylib","ubuntu":"zzz_botris.so","windows":"zzz_botris.dll"}')[inputs.os] }}
+      shell: bash
+      run: mv ${{ inputs.output_folder }}/${{ env.TETRIS_AI_INPUT_FILENAME }} ${{ inputs.output_folder }}/${{ env.TETRIS_AI_OUTPUT_FILENAME }}

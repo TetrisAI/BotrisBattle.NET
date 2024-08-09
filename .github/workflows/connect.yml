@@ -1,0 +1,74 @@
+name: ZZZBotris Connect To the Room
+
+on:
+  workflow_dispatch:
+    inputs:
+      os:
+        description: "Runnning OS"
+        required: true
+        type: choice
+        options:
+          - macos
+          - ubuntu
+          - windows
+        default: "ubuntu"
+      token:
+        description: "BotrisBattle API token"
+        required: true
+        type: string
+      master_key:
+        description: "BotrisBattle Room Master Key"
+        required: true
+        type: string
+      next_count:
+        description: "Next count"
+        required: false
+        type: number
+        default: 6
+      level:
+        description: "Level"
+        required: false
+        type: number
+        default: 8
+      bpm:
+        description: "BPM"
+        required: false
+        type: number
+        default: 200
+
+jobs:
+  connect:
+    runs-on: ${{ inputs.os }}-latest
+    env:
+      OUTPUT_FOLDER: ./build
+      PROJECT_NAME: ZZZTOJ.Botris
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Project
+        uses: ./.github/actions/build_dotnet
+        with:
+          output_folder: ${{ env.OUTPUT_FOLDER }}
+          project_name: ${{ env.PROJECT_NAME }}
+      - name: Get tetris_ai_runner
+        uses: ./.github/actions/get_tetris_ai
+        with:
+          os: ${{ inputs.os }}
+          output_folder: ${{ env.OUTPUT_FOLDER }}
+      - name: Generate bot config
+        shell: python3 {0}
+        run: |
+          import json
+          config = {
+              "NextCnt": ${{ inputs.next_count }},
+              "Level": ${{ inputs.level }},
+              "BPM": ${{ inputs.bpm }},
+              "Token": "${{ inputs.token }}",
+              "RoomKey": "${{ inputs.master_key }}"
+          }
+          json.dump(config, open("${{ env.OUTPUT_FOLDER }}/botconfig.json", "w"))
+      - name: Run bot
+        shell: bash
+        run: |
+          pushd ${{ env.OUTPUT_FOLDER }}
+          chmod +x ${{ env.PROJECT_NAME }}
+          ./${{ env.PROJECT_NAME }}

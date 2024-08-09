@@ -1,0 +1,37 @@
+name: 'Build .Net'
+description: 'Build .Net project'
+inputs:
+  output_folder:
+    description: 'Output folder'
+    required: false
+    default: "./build"
+  project_name:
+    description: 'Project name'
+    required: false
+    default: "ZZZTOJ.Botris"
+  self_contained:
+    description: 'Self contained'
+    required: false
+    default: "false"
+  single_file:
+    description: 'Publish single file'
+    required: false
+    default: "true"
+runs:
+  using: "composite"
+  steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Install dependencies
+      shell: bash
+      run: dotnet restore
+    - name: Build and publish
+      shell: bash
+      run: |
+        mkdir ${{ inputs.output_folder }}
+        dotnet publish ${{ inputs.project_name }} -p:PublishSingleFile=${{ inputs.single_file }} --self-contained ${{ inputs.self_contained }} -o ${{ inputs.output_folder }}
+    - name: Remove pdb files
+      shell: bash
+      run: rm ${{ inputs.output_folder }}/*.pdb
