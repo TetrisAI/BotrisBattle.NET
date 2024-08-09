@@ -240,8 +240,13 @@ namespace ZZZTOJ.Botris
             }
 
             _IOBoard.PrintBoard();
-            Console.WriteLine($"combo: {requestMovePayload.GameState.combo,-3} b2b: {requestMovePayload.GameState.b2b} garbage: {requestMovePayload.GameState.garbageQueued.Length,-3}");
-            Console.WriteLine($"mino: {requestMovePayload.GameState.current.piece} pos: {requestMovePayload.GameState.current.x} {requestMovePayload.GameState.current.y}");
+
+            if (!BotSetting.Quiet) {
+                Console.WriteLine($"combo: {requestMovePayload.GameState.combo,-3} b2b: {requestMovePayload.GameState.b2b} garbage: {requestMovePayload.GameState.garbageQueued.Length,-3}");
+                Console.WriteLine($"mino: {requestMovePayload.GameState.current.piece} pos: {requestMovePayload.GameState.current.x} {requestMovePayload.GameState.current.y}");
+            }
+
+           
             //if (_nowIdx == 0)
             //{
             //    _startTime = DateTime.Now;

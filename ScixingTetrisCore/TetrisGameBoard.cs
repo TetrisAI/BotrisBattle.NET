@@ -191,7 +191,7 @@ namespace ScixingTetrisCore
                 spinCnt += TetrisRule.CheckPostionOk(this, TetrisMinoStatus.Position.X, TetrisMinoStatus.Position.Y + 2) ? 0 : 1;
                 spinCnt += TetrisRule.CheckPostionOk(this, TetrisMinoStatus.Position.X + 2, TetrisMinoStatus.Position.Y + 2) ? 0 : 1;
                 if (spinCnt >= 3) isTspin = true;
-                if (spinCnt >= 3) Console.WriteLine("Tspin");
+                // if (spinCnt >= 3) Console.WriteLine("Tspin");
             }
             if (cnt == 4 || isTspin) B2B++;
 

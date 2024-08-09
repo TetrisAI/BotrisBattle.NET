@@ -4,6 +4,9 @@ using System.Text.Json;
 using ZZZTOJ.Botris;
 using System.Runtime.InteropServices;
 
+
+
+
 try
 {
     nint v = ZZZTOJCore.AIName(8);
@@ -25,6 +28,11 @@ if (File.Exists("botconfig.json"))
 else
 {
     File.WriteAllText("botconfig.json", JsonSerializer.Serialize(botSetting));
+}
+
+if (args.Contains("--quiet")) {
+
+    botSetting.Quiet = true;
 }
 
 BotrisBot bot = new(botSetting.Token);
@@ -66,6 +74,7 @@ public class BotSetting
 
     public string Token { get; set; } = string.Empty;
     public string RoomKey { get; set; } = string.Empty;
+    public bool Quiet {get;set;} = false;
     //public bool AutoLevel { get; set; } = true;
 
 }
