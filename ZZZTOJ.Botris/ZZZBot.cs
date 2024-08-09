@@ -132,13 +132,13 @@ namespace ZZZTOJ.Botris
             //    }
 
             //}
-
+            int[] comboTable = new int[] { 0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4,4,4,4, -1 };
             var path = ZZZTOJCore.BotrisAI2(field1, 10, 22, requestMovePayload.GameState.b2b ? 1 : 0,
                     requestMovePayload.GameState.combo, 
                     requestMovePayload.GameState.queue.Select(s => s[0]).ToArray(),
 
                     requestMovePayload.GameState.held == null ? ' ': requestMovePayload.GameState.held[0],
-                    requestMovePayload.GameState.canHold, requestMovePayload.GameState.current.piece[0], 3, 1, 0, true, false, requestMovePayload.GameState.garbageQueued.Length, new[] { 0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4,4,4,4, -1 }, BotSetting.NextCnt, BotSetting.Level, 0);
+                    requestMovePayload.GameState.canHold, requestMovePayload.GameState.current.piece[0], 3, 1, 0, true, false, requestMovePayload.GameState.garbageQueued.Length, comboTable, BotSetting.NextCnt, BotSetting.Level, 0);
             string resultpath = Marshal.PtrToStringAnsi(path);
             _IOBoard.NextQueue.Enqueue(TetrisMino.Z);
             Console.WriteLine(resultpath.PadRight(50));

@@ -2,7 +2,19 @@
 using BotrisBattle.NET;
 using System.Text.Json;
 using ZZZTOJ.Botris;
+using System.Runtime.InteropServices;
 
+try
+{
+    nint v = ZZZTOJCore.AIName(8);
+
+    string name = Marshal.PtrToStringAnsi(v);
+    Console.WriteLine("DLL AIName = {0}", name);
+}
+catch(Exception e)
+{
+    Console.WriteLine(e.Message);
+}
 
 BotSetting botSetting = new();
 
