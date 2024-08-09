@@ -28,7 +28,7 @@ jobs:
     - name: Publish
       run: |
         mkdir ./pub
-        dotnet publish -p:PublishSingleFile=true --self-contained true -o ./pub
+        dotnet publish ZZZTOJ.Botris -p:PublishSingleFile=true --self-contained true -o ./pub
     - name: Upload dotnet test results
       uses: actions/upload-artifact@v4
       with:
