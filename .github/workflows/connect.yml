@@ -67,7 +67,8 @@ jobs:
               "Level": ${{ inputs.level }},
               "BPM": ${{ inputs.bpm }},
               "Token": "${{ inputs.token }}",
-              "RoomKey": "${{ inputs.master_key }}"
+              "RoomKey": "${{ inputs.master_key }}",
+              "Quiet": true
           }
           json.dump(config, open("${{ env.OUTPUT_FOLDER }}/botconfig.json", "w"))
       - name: Run bot
@@ -75,4 +76,4 @@ jobs:
         run: |
           pushd ${{ env.OUTPUT_FOLDER }}
           chmod +x ${{ env.PROJECT_NAME }}
-          ./${{ env.PROJECT_NAME }} --quiet
+          ./${{ env.PROJECT_NAME }}
