@@ -242,9 +242,9 @@ namespace ZZZTOJ.Botris
                 if (move == 'V') break;
             }
 
-            _IOBoard.PrintBoard();
 
             if (!BotSetting.Quiet) {
+            _IOBoard.PrintBoard();
                 Console.WriteLine($"combo: {requestMovePayload.GameState.combo,-3} b2b: {requestMovePayload.GameState.b2b} garbage: {requestMovePayload.GameState.garbageQueued.Length,-3}");
                 Console.WriteLine($"mino: {requestMovePayload.GameState.current.piece} pos: {requestMovePayload.GameState.current.x} {requestMovePayload.GameState.current.y}");
             }
