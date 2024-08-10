@@ -68,7 +68,7 @@ jobs:
               "BPM": ${{ inputs.bpm }},
               "Token": "${{ inputs.token }}",
               "RoomKey": "${{ inputs.master_key }}",
-              "Quiet": true
+              "Quiet": True
           }
           json.dump(config, open("${{ env.OUTPUT_FOLDER }}/botconfig.json", "w"))
       - name: Run bot
