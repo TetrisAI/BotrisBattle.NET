@@ -140,7 +140,7 @@ namespace ZZZTOJ.Botris
 
                     requestMovePayload.GameState.held == null ? ' ': requestMovePayload.GameState.held[0],
                     requestMovePayload.GameState.canHold, requestMovePayload.GameState.current.piece[0],
-                    requestMovePayload.GameState.current.x, 21 - requestMovePayload.GameState.current.y, requestMovePayload.GameState.current.rotation,
+                    requestMovePayload.GameState.current.x, 20 - requestMovePayload.GameState.current.y, requestMovePayload.GameState.current.rotation,
                     true, false, requestMovePayload.GameState.garbageQueued.Length, comboTable, BotSetting.NextCnt, BotSetting.Level, 0);
             string resultpath = Marshal.PtrToStringAnsi(path);
             _IOBoard.NextQueue.Enqueue(TetrisMino.Z);
@@ -153,22 +153,16 @@ namespace ZZZTOJ.Botris
                     case 'z':
                     case 'Z':
                         _IOBoard.LeftRotation();
-
                         moveResult.moves.Add(Command.rotate_ccw);
                         break;
                     case 'c':
                     case 'C':
                         _IOBoard.RightRotation();
-
                         moveResult.moves.Add(Command.rotate_cw);
-
                         break;
                     case 'l':
                         _IOBoard.MoveLeft();
-
                         moveResult.moves.Add(Command.move_left);
-
-
                         break;
                     case 'L':
                         while (_IOBoard.MoveLeft()) ;
@@ -182,14 +176,14 @@ namespace ZZZTOJ.Botris
                     case 'R':
                         while (_IOBoard.MoveRight()) ;
                         moveResult.moves.Add(Command.sonic_right);
-
                         break;
                     case 'd':
+                        _IOBoard.SoftDrop();
+                        moveResult.moves.Add(Command.drop);
+                        break;
                     case 'D':
                         _IOBoard.SonicDrop();
-
                         moveResult.moves.Add(Command.sonic_drop);
-
                         break;
                     case 'v':
                         //_IOBoard.OnHold();
@@ -232,9 +226,7 @@ namespace ZZZTOJ.Botris
                         //    moveResult.expected_cells[i][0] = list[i].Y;
                         //}
                         _IOBoard.HardDrop();
-
-                        moveResult.moves.Add(Command.drop);
-
+                        //moveResult.moves.Add(Command.hard_drop);
                         break;
                     default:
                         break;

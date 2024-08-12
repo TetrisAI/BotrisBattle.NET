@@ -96,9 +96,10 @@ namespace BotrisBattle.NET
     // Enum for Command
     public enum Command
     {
-        hold, move_left, move_right, sonic_left, sonic_right,
+        hold, move_left, move_right, sonic_left, sonic_right, hard_drop,
         rotate_cw, rotate_ccw, drop, sonic_drop
     }
+
 
     // Enum for ClearName
     public enum ClearName
