@@ -133,12 +133,17 @@ namespace ZZZTOJ.Botris
 
             //}
             int[] comboTable = new int[] { 0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4,4,4,4, -1 };
+
+            if (!BotSetting.Quiet) {
+                Console.WriteLine("T={0},X={1},Y={2},R={3}",requestMovePayload.GameState.current.piece[0],requestMovePayload.GameState.current.x, requestMovePayload.GameState.current.y, requestMovePayload.GameState.current.rotation);
+            }
             var path = ZZZTOJCore.BotrisAI3(field1, 10, 22, requestMovePayload.GameState.b2b ? 1 : 0,
                     requestMovePayload.GameState.combo, 
                     requestMovePayload.GameState.queue.Select(s => s[0]).ToArray(),
-
                     requestMovePayload.GameState.held == null ? ' ': requestMovePayload.GameState.held[0],
-                    requestMovePayload.GameState.canHold, requestMovePayload.GameState.current.piece[0], 3, 1, 0, true, false, requestMovePayload.GameState.garbageQueued.Length, comboTable, BotSetting.NextCnt, BotSetting.Duration);
+                    requestMovePayload.GameState.canHold, requestMovePayload.GameState.current.piece[0],
+                    requestMovePayload.GameState.current.x, 20 - requestMovePayload.GameState.current.y, requestMovePayload.GameState.current.rotation,
+                    true, false, requestMovePayload.GameState.garbageQueued.Length, comboTable, BotSetting.NextCnt, BotSetting.Duration);
             string resultpath = Marshal.PtrToStringAnsi(path);
             _IOBoard.NextQueue.Enqueue(TetrisMino.Z);
             Console.WriteLine(resultpath.PadRight(50));
@@ -150,22 +155,16 @@ namespace ZZZTOJ.Botris
                     case 'z':
                     case 'Z':
                         _IOBoard.LeftRotation();
-
                         moveResult.moves.Add(Command.rotate_ccw);
                         break;
                     case 'c':
                     case 'C':
                         _IOBoard.RightRotation();
-
                         moveResult.moves.Add(Command.rotate_cw);
-
                         break;
                     case 'l':
                         _IOBoard.MoveLeft();
-
                         moveResult.moves.Add(Command.move_left);
-
-
                         break;
                     case 'L':
                         while (_IOBoard.MoveLeft()) ;
@@ -179,14 +178,14 @@ namespace ZZZTOJ.Botris
                     case 'R':
                         while (_IOBoard.MoveRight()) ;
                         moveResult.moves.Add(Command.sonic_right);
-
                         break;
                     case 'd':
+                        _IOBoard.SoftDrop();
+                        moveResult.moves.Add(Command.drop);
+                        break;
                     case 'D':
                         _IOBoard.SonicDrop();
-
                         moveResult.moves.Add(Command.sonic_drop);
-
                         break;
                     case 'v':
                         //_IOBoard.OnHold();
@@ -229,9 +228,7 @@ namespace ZZZTOJ.Botris
                         //    moveResult.expected_cells[i][0] = list[i].Y;
                         //}
                         _IOBoard.HardDrop();
-
-                        moveResult.moves.Add(Command.drop);
-
+                        //moveResult.moves.Add(Command.hard_drop);
                         break;
                     default:
                         break;
@@ -239,9 +236,9 @@ namespace ZZZTOJ.Botris
                 if (move == 'V') break;
             }
 
-            _IOBoard.PrintBoard();
 
             if (!BotSetting.Quiet) {
+            _IOBoard.PrintBoard();
                 Console.WriteLine($"combo: {requestMovePayload.GameState.combo,-3} b2b: {requestMovePayload.GameState.b2b} garbage: {requestMovePayload.GameState.garbageQueued.Length,-3}");
                 Console.WriteLine($"mino: {requestMovePayload.GameState.current.piece} pos: {requestMovePayload.GameState.current.x} {requestMovePayload.GameState.current.y}");
             }

@@ -25,16 +25,6 @@ on:
         required: false
         type: number
         default: 6
-      level:
-        description: "Level"
-        required: false
-        type: number
-        default: 8
-      bpm:
-        description: "BPM"
-        required: false
-        type: number
-        default: 200
 
 jobs:
   connect:
@@ -48,6 +38,12 @@ jobs:
         with:
           exclude_inputs: os, next_count, level, bpm
       - uses: actions/checkout@v4
+      - name: Upgrade glibc
+        if: ${{ inputs.os == 'ubuntu' }}
+        run: |
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install --only-upgrade libstdc++6
       - name: Build Project
         uses: ./.github/actions/build_dotnet
         with:
@@ -64,10 +60,9 @@ jobs:
           import json
           config = {
               "NextCnt": ${{ inputs.next_count }},
-              "Level": ${{ inputs.level }},
-              "BPM": ${{ inputs.bpm }},
               "Token": "${{ inputs.token }}",
-              "RoomKey": "${{ inputs.master_key }}"
+              "RoomKey": "${{ inputs.master_key }}",
+              "Quiet": True
           }
           json.dump(config, open("${{ env.OUTPUT_FOLDER }}/botconfig.json", "w"))
       - name: Run bot
@@ -75,4 +70,4 @@ jobs:
         run: |
           pushd ${{ env.OUTPUT_FOLDER }}
           chmod +x ${{ env.PROJECT_NAME }}
-          ./${{ env.PROJECT_NAME }} --quiet
+          ./${{ env.PROJECT_NAME }}
