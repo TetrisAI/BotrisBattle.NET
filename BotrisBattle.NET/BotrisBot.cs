@@ -27,8 +27,14 @@ namespace BotrisBattle.NET
         {
             _websocket = new BotrisWebsocket(token);
 
+            _websocket.On<AuthenticatedPayload>("authenticated", (payload) =>
+            {
+                //Console.WriteLine("认证成功：{0}", payload.SessionId);
+            });
+
             _websocket.On<RoomDataPayload>("room_data", payload =>
             {
+                // TODO: Consider network latency
                 UpdateConfig?.Invoke(
                     new UpdateConfigPayload
                     {
@@ -37,10 +43,7 @@ namespace BotrisBattle.NET
                 );
             });
 
-            _websocket.On<AuthenticatedPayload>("authenticated", (payload) =>
-            {
-                //Console.WriteLine("认证成功：{0}", payload.SessionId);
-            });
+            _websocket.On("game_reset", () => { GameReset?.Invoke(); });
 
             _websocket.On("game_started", () => { GameStart?.Invoke(); });
 
@@ -50,7 +53,16 @@ namespace BotrisBattle.NET
                 RequestMove?.Invoke(payload);
             });
 
-            _websocket.On("game_reset", () => { GameReset?.Invoke(); });
+            _websocket.On<RoomDataPayload>("settings_changed", payload =>
+            {
+                // TODO: Consider network latency
+                UpdateConfig?.Invoke(
+                    new UpdateConfigPayload
+                    {
+                        Duration = (int)Math.Floor(1000 / payload.roomData.pps)
+                    }
+                );
+            });
         }
 
 
