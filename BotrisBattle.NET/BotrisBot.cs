@@ -8,8 +8,8 @@ namespace BotrisBattle.NET
 
         public event Action GameStart;
         public event Action GameReset;
-
         public event Action<RequestMovePayload> RequestMove;
+        public event Action<UpdateConfigPayload> UpdateConfig;
 
         public void SendMove(Command[] commands)
         {
@@ -27,9 +27,14 @@ namespace BotrisBattle.NET
         {
             _websocket = new BotrisWebsocket(token);
 
-            _websocket.On<RoomDataPayload>("roomData", (payload) =>
+            _websocket.On<RoomDataPayload>("room_data", payload =>
             {
-                //Console.WriteLine("房间信息：{0}", payload.roomData.id);
+                UpdateConfig?.Invoke(
+                    new UpdateConfigPayload
+                    {
+                        Duration = (int)Math.Floor(1000 / payload.roomData.pps)
+                    }
+                );
             });
 
             _websocket.On<AuthenticatedPayload>("authenticated", (payload) =>
@@ -37,10 +42,7 @@ namespace BotrisBattle.NET
                 //Console.WriteLine("认证成功：{0}", payload.SessionId);
             });
 
-            _websocket.On("game_started", () =>
-            {
-                GameStart?.Invoke();
-            });
+            _websocket.On("game_started", () => { GameStart?.Invoke(); });
 
             _websocket.On<RequestMovePayload>("request_move", (payload) =>
             {
@@ -48,19 +50,13 @@ namespace BotrisBattle.NET
                 RequestMove?.Invoke(payload);
             });
 
-            _websocket.On("game_reset", () =>
-            {
-                GameReset?.Invoke();
-            });
+            _websocket.On("game_reset", () => { GameReset?.Invoke(); });
         }
-
 
 
         public async void Connect(string room, CancellationToken token)
         {
             await _websocket.Connect(room, token);
         }
-
-        
     }
 }

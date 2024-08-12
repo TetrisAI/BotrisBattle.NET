@@ -5,6 +5,8 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
+// ReSharper disable InconsistentNaming
+
 namespace BotrisBattle.NET
 {
 
@@ -22,9 +24,9 @@ namespace BotrisBattle.NET
 
     public class PlayerInfo
     {
-        public string userId { get; set; }
-        public string creator { get; set; }
-        public string bot { get; set; }
+        public required string userId { get; set; }
+        public required string creator { get; set; }
+        public required string bot { get; set; }
     }
 
     public class PlayerData
@@ -66,12 +68,11 @@ namespace BotrisBattle.NET
 
     public class RoomData
     {
-        public string id { get; set; }
-        public PlayerInfo host { get; set; }
+        public required string id { get; set; }
+        public required PlayerInfo host { get; set; }
         public bool @private { get; set; }
         public int ft { get; set; }
-        public int initialPps { get; set; }
-        public int finalPps { get; set; }
+        public double pps { get; set; }
         public int startMargin { get; set; }
         public int endMargin { get; set; }
         public int maxPlayers { get; set; }
@@ -79,9 +80,9 @@ namespace BotrisBattle.NET
         public bool roundOngoing { get; set; }
         public long? startedAt { get; set; }
         public long? endedAt { get; set; }
-        public string lastWinner { get; set; } // Assuming SessionId is a string
-        public List<PlayerData> players { get; set; }
-        public List<PlayerInfo> banned { get; set; }
+        public string? lastWinner { get; set; }
+        public List<PlayerData> players { get; set; } = [];
+        public List<PlayerInfo> banned { get; set; } = [];
     }
 
     // Enum for Piece
