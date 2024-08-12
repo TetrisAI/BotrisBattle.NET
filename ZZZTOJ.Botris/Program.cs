@@ -72,6 +72,7 @@ void BotUpdateConfig(UpdateConfigPayload payload)
     try
     {
         bot1.BotSetting.Duration = payload.Duration;
+        Console.WriteLine("Update config: duration={0}", payload.Duration);
     }
     catch (Exception e)
     {
