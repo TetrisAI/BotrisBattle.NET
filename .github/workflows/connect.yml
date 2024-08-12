@@ -48,6 +48,12 @@ jobs:
         with:
           exclude_inputs: os, next_count, level, bpm
       - uses: actions/checkout@v4
+      - name: Upgrade glibc
+        if: ${{ inputs.os == 'ubuntu' }}
+        run: |
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install --only-upgrade libstdc++6
       - name: Build Project
         uses: ./.github/actions/build_dotnet
         with:
