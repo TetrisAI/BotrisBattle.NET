@@ -41,7 +41,7 @@ jobs:
       - name: Prepare for release
         if: ${{ (startsWith(github.ref, 'refs/tags/pre') || startsWith(github.ref, 'refs/tags/v'))}}
         run: |
-          zip ${{ env.PROJECT_NAME }}_${{ matrix.os }}.zip ${{ env.OUTPUT_FOLDER }}/*
+          7z a -tzip ${{ env.PROJECT_NAME }}_${{ matrix.os }}.zip ${{ env.OUTPUT_FOLDER }}/*
       - name: Upload release
         if: ${{ (startsWith(github.ref, 'refs/tags/pre') || startsWith(github.ref, 'refs/tags/v'))}}
         uses: ncipollo/release-action@v1
